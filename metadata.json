@@ -1,0 +1,6 @@
+{
+  "name": "Behind the Brand",
+  "description": "An editorial business and branding magazine exploring the stories, strategies, and consumer psychology behind iconic brands.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
