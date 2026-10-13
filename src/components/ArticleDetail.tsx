@@ -18,6 +18,7 @@ export const ArticleDetail: React.FC<ArticleDetailProps> = ({
 }) => {
   const [copied, setCopied] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [activeSectionId, setActiveSectionId] = useState<string>('introduction');
 
   // Keyboard navigation & scroll to top on change
   useEffect(() => {
@@ -37,7 +38,7 @@ export const ArticleDetail: React.FC<ArticleDetailProps> = ({
     };
 
     window.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
@@ -45,11 +46,52 @@ export const ArticleDetail: React.FC<ArticleDetailProps> = ({
     };
   }, [article.id, onClose]);
 
+  // Active section tracking via IntersectionObserver
+  useEffect(() => {
+    const sectionIds = [
+      'introduction',
+      ...article.content.sections.map((s) => `section-${s.number}`),
+      'key-takeaways',
+    ];
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSectionId(entry.target.id);
+          }
+        });
+      },
+      {
+        rootMargin: '-100px 0px -50% 0px',
+        threshold: 0.1,
+      }
+    );
+
+    sectionIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [article.id, article.content.sections]);
+
   const handleShare = () => {
     if (navigator.clipboard) {
       navigator.clipboard.writeText(window.location.href);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+    e.preventDefault();
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+      setActiveSectionId(id);
     }
   };
 
@@ -68,10 +110,10 @@ export const ArticleDetail: React.FC<ArticleDetailProps> = ({
       ].slice(0, 3);
 
   return (
-    <div className="min-h-screen bg-[#F5F4F0] text-[#111111] animate-fadeIn">
-      {/* Top Reading Progress Bar */}
+    <div className="min-h-screen bg-[#F5F4F0] text-[#111111] animate-article-enter will-change-transform">
+      {/* Top Reading Progress Bar with glow */}
       <div 
-        className="fixed top-0 left-0 h-[2px] bg-[#111111] z-50 transition-all duration-100 ease-out"
+        className="fixed top-0 left-0 h-[3px] bg-gradient-to-r from-neutral-800 to-black z-50 transition-[width] duration-150 ease-out shadow-[0_0_8px_rgba(0,0,0,0.4)]"
         style={{ width: `${scrollProgress}%` }}
         role="progressbar"
         aria-valuenow={Math.round(scrollProgress)}
@@ -80,29 +122,33 @@ export const ArticleDetail: React.FC<ArticleDetailProps> = ({
       />
 
       {/* Sub-header navigation bar for article */}
-      <div className="sticky top-16 z-30 bg-[#F5F4F0]/95 backdrop-blur-sm border-b border-[#D9D7D0]">
-        <div className="max-w-[1000px] mx-auto px-5 sm:px-8 h-12 flex items-center justify-between">
-          <button
-            onClick={onClose}
-            className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] font-sans font-medium text-[#111111] hover:text-[#555555] cursor-pointer py-1"
+      <div className="sticky top-16 z-30 bg-[#FAF9F6]/95 backdrop-blur-md border-b border-[#D9D7D0] transition-all duration-200 shadow-sm">
+        <div className="max-w-[1040px] mx-auto px-5 sm:px-8 h-12 flex items-center justify-between">
+          <a
+            href="/"
+            onClick={(e) => {
+              e.preventDefault();
+              onClose();
+            }}
+            className="group inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-sans font-medium text-[#111111] hover:text-[#555555] cursor-pointer py-1"
           >
-            <span aria-hidden="true">←</span>
-            <span>Back to stories</span>
-          </button>
+            <span aria-hidden="true" className="group-hover:-translate-x-1 transition-transform duration-200">←</span>
+            <span>Back to dossiers</span>
+          </a>
 
           <div className="flex items-center gap-4 text-xs font-mono text-[#777777]">
             <span className="hidden sm:inline uppercase">
-              NO. {article.number} / {article.category}
+              DOSSIER {article.number} &bull; {article.category}
             </span>
             <button
               onClick={handleShare}
-              className="hover:text-[#111111] uppercase tracking-wider text-[11px] font-sans px-2.5 py-1 border border-[#D9D7D0] bg-[#FAF9F6] cursor-pointer"
+              className="hover:text-[#111111] uppercase tracking-wider text-[11px] font-sans px-3 py-1 border border-[#D9D7D0] bg-white hover:bg-[#ECEAE5] transition-colors cursor-pointer"
             >
               {copied ? 'Link Copied' : 'Share'}
             </button>
             <button
               onClick={onClose}
-              className="text-[#111111] hover:text-[#777777] cursor-pointer p-1"
+              className="text-[#111111] hover:text-[#777777] cursor-pointer p-1 font-mono text-sm"
               aria-label="Close article"
             >
               ✕
@@ -111,160 +157,317 @@ export const ArticleDetail: React.FC<ArticleDetailProps> = ({
         </div>
       </div>
 
-      {/* Main Article Container */}
-      <article className="max-w-[860px] mx-auto px-5 sm:px-8 pt-10 sm:pt-16 pb-24">
-        {/* Header Metadata */}
-        <div className="mb-6">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-1.5 bg-[#ECEAE5] border border-[#D9D7D0] flex items-center justify-center">
-              <BrandLogo brand={article.brand} className="h-4.5 w-auto max-w-[80px]" color="#111111" />
+      {/* Cinematic Article Hero Header */}
+      <header className="relative bg-[#0C0D0E] text-[#F5F4F0] pt-14 pb-16 sm:pb-20 border-b border-white/10 overflow-hidden">
+        <div className="absolute inset-0 film-grain opacity-20 pointer-events-none" aria-hidden="true" />
+        <div 
+          className="absolute top-0 right-1/4 w-[450px] h-[450px] bg-gradient-to-br from-amber-500/10 to-transparent rounded-full blur-3xl pointer-events-none"
+          aria-hidden="true" 
+        />
+
+        <div className="relative max-w-[1040px] mx-auto px-5 sm:px-8">
+          {/* Breadcrumb Navigation for SEO & UX */}
+          <nav aria-label="Breadcrumb" className="mb-8">
+            <ol className="flex items-center flex-wrap gap-2 text-xs font-mono text-[#8E9297]">
+              <li>
+                <a
+                  href="/"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onClose();
+                  }}
+                  className="hover:text-[#F5F4F0] transition-colors"
+                >
+                  Index
+                </a>
+              </li>
+              <li aria-hidden="true" className="text-white/20">/</li>
+              <li>
+                <a
+                  href="/#stories"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onClose();
+                  }}
+                  className="hover:text-[#F5F4F0] transition-colors"
+                >
+                  Stories
+                </a>
+              </li>
+              <li aria-hidden="true" className="text-white/20">/</li>
+              <li>
+                <span className="text-[#F5F4F0] font-medium" aria-current="page">
+                  {article.brand}
+                </span>
+              </li>
+            </ol>
+          </nav>
+
+          {/* Header Metadata */}
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-5">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-white/5 border border-white/15 flex items-center justify-center">
+                <BrandLogo brand={article.brand} className="h-5 w-auto max-w-[90px]" color="#F5F4F0" />
+              </div>
+              <div className="text-xs uppercase tracking-[0.28em] font-mono font-bold text-[#F5F4F0]">
+                {article.brand}
+              </div>
             </div>
-            <div className="text-xs uppercase tracking-[0.25em] font-sans font-bold text-[#111111]">
-              {article.brand}
+            
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[#8E9297] font-mono">
+              <span className="uppercase tracking-[0.18em] text-[#F5F4F0] px-2 py-0.5 bg-white/10">{article.category}</span>
+              <span aria-hidden="true" className="text-white/20">&bull;</span>
+              <span>{article.readTime}</span>
+              <span aria-hidden="true" className="text-white/20">&bull;</span>
+              <span>By {article.author || 'Behind the Brand Editorial Team'}</span>
             </div>
           </div>
-          <div className="text-xs uppercase tracking-[0.2em] font-sans text-[#777777] flex items-center gap-2">
-            <span>{article.category}</span>
-            <span aria-hidden="true">&bull;</span>
-            <span className="font-mono">{article.readTime}</span>
+
+          {/* Large Article H1 Title (Targeting Primary SEO Keyword) */}
+          <h1 className="editorial-article-title font-medium text-[#F5F4F0] mb-5 text-balance max-w-4xl">
+            {article.seoTitle || article.title}
+          </h1>
+
+          {article.seoTitle && article.seoTitle !== article.title && (
+            <p className="text-xl sm:text-2xl text-[#B3B7BD] font-editorial italic mb-8 max-w-3xl">
+              {article.title}
+            </p>
+          )}
+
+          {/* Published metadata */}
+          <div className="text-xs font-mono text-[#8E9297] uppercase tracking-[0.2em]">
+            PUBLISHED: <time dateTime="2026-10-08">{article.publishDate || 'October 2026'}</time> &bull; ACADEMIC BRAND ESSAY
           </div>
         </div>
+      </header>
 
-        {/* Large Article Title */}
-        <h1 className="editorial-article-title font-medium text-[#111111] mb-8 text-balance">
-          {article.title}
-        </h1>
-
-        {/* Hero Image */}
-        <div className="mb-12 border border-[#D9D7D0]">
+      {/* Main Reading Canvas */}
+      <article className="max-w-[1040px] mx-auto px-5 sm:px-8 pt-10 sm:pt-14 pb-24">
+        {/* Hero Visual Container */}
+        <div className="mb-14 border border-[#D9D7D0] shadow-md overflow-hidden bg-[#ECEAE5]">
           <EditorialVisual article={article} aspectRatio="16:9" isHero={true} />
         </div>
 
-        {/* Reading Column */}
-        <div className="max-w-[700px] mx-auto">
-          {/* Introduction */}
-          <section className="mb-12">
-            <div className="text-[11px] uppercase tracking-[0.22em] font-sans font-bold text-[#777777] mb-4">
-              INTRODUCTION
+        {/* Reading Column & Sticky Sidebar */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+          {/* Main Content (8 cols) */}
+          <div className="lg:col-span-8 max-w-[700px]">
+            {/* Introduction */}
+            <section id="introduction" className="mb-14 scroll-mt-32">
+              <div className="font-mono text-xs uppercase tracking-[0.25em] text-[#777777] mb-3 flex items-center gap-2">
+                <span className="w-1.5 h-1.5 bg-[#111111]" aria-hidden="true" />
+                <span>00 / INTRODUCTION</span>
+              </div>
+              <p className="text-xl sm:text-2xl text-[#111111] leading-relaxed font-editorial font-normal mb-6">
+                {article.content.intro}
+              </p>
+              <div className="w-16 h-[2px] bg-[#111111] mt-8" aria-hidden="true" />
+            </section>
+
+            {/* Core Analytical Sections */}
+            <div className="space-y-16">
+              {article.content.sections.map((section) => (
+                <section
+                  key={section.number}
+                  id={`section-${section.number}`}
+                  className="scroll-mt-32 pt-2 border-t border-[#D9D7D0]/60"
+                >
+                  <div className="flex items-baseline gap-3 mb-4">
+                    <span className="font-mono text-xs uppercase tracking-widest text-[#777777]">
+                      0{section.number}
+                    </span>
+                    <h2 className="text-2xl sm:text-3xl font-editorial font-medium text-[#111111] leading-tight">
+                      {section.heading}
+                    </h2>
+                  </div>
+
+                  <div className="space-y-5 text-base sm:text-lg text-[#333333] leading-relaxed font-sans font-light">
+                    {section.paragraphs.map((p, pIdx) => (
+                      <p key={pIdx}>{p}</p>
+                    ))}
+                  </div>
+                </section>
+              ))}
             </div>
-            <p className="text-lg sm:text-xl text-[#222222] font-editorial leading-relaxed first-letter:text-5xl first-letter:font-editorial first-letter:font-bold first-letter:float-left first-letter:mr-3 first-letter:mt-1 first-letter:text-[#111111]">
-              {article.content.intro}
-            </p>
-          </section>
 
-          <hr className="border-t border-[#D9D7D0] my-10" />
+            {/* Pull Quote / Editorial Key Insight */}
+            {article.content.keyInsight && (
+              <aside className="my-16 p-8 sm:p-10 bg-[#FAF9F6] border-l-4 border-[#111111] border-y border-r border-[#D9D7D0] shadow-sm">
+                <div className="font-mono text-xs uppercase tracking-[0.25em] text-[#777777] mb-3">
+                  CORE STRATEGIC LESSON
+                </div>
+                <blockquote className="editorial-quote text-2xl sm:text-3xl text-[#111111] leading-snug">
+                  “{article.content.keyInsight}”
+                </blockquote>
+              </aside>
+            )}
 
-          {/* Numbered Sections */}
-          <div className="space-y-12">
-            {article.content.sections.map((section) => (
-              <section key={section.number} className="scroll-mt-32">
-                <div className="text-xs font-mono uppercase tracking-widest text-[#777777] mb-2">
-                  SECTION {section.number}
+            {/* Takeaway Section */}
+            {article.content.takeaway && (
+              <section id="key-takeaways" className="scroll-mt-32 pt-8 border-t-2 border-[#111111] mb-14">
+                <div className="font-mono text-xs uppercase tracking-[0.25em] text-[#777777] mb-3">
+                  CONCLUSION &amp; EXECUTIVE TAKEAWAY
                 </div>
-                <h2 className="text-2xl sm:text-3xl font-editorial font-medium text-[#111111] mb-4">
-                  {section.heading}
-                </h2>
-                <div className="space-y-4">
-                  {section.paragraphs.map((p, idx) => (
-                    <p key={idx} className="text-base sm:text-[17px] text-[#333333] leading-relaxed font-sans">
-                      {p}
-                    </p>
-                  ))}
-                </div>
+                <h3 className="text-2xl font-editorial font-medium text-[#111111] mb-4">
+                  The Enduring Legacy
+                </h3>
+                <p className="text-base sm:text-lg text-[#333333] leading-relaxed font-sans font-light">
+                  {article.content.takeaway}
+                </p>
               </section>
-            ))}
-          </div>
+            )}
 
-          {/* Key Insight Box */}
-          <div className="my-14 p-6 sm:p-8 bg-[#ECEAE5] border border-[#D9D7D0]">
-            <div className="text-[11px] uppercase tracking-[0.22em] font-sans font-bold text-[#777777] mb-2">
-              KEY BUSINESS INSIGHT
+            {/* Keyword tags for academic context */}
+            <div className="pt-8 border-t border-[#D9D7D0]">
+              <div className="text-[11px] font-mono text-[#777777] uppercase tracking-[0.2em] mb-3">
+                INDEXED KEYWORDS:
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {article.keywords.map((kw) => (
+                  <span
+                    key={kw}
+                    className="text-xs font-sans px-3 py-1 bg-[#ECEAE5] border border-[#D9D7D0] text-[#333333]"
+                  >
+                    #{kw}
+                  </span>
+                ))}
+              </div>
             </div>
-            <p className="text-base sm:text-lg font-sans font-medium text-[#111111] leading-relaxed">
-              {article.content.keyInsight}
-            </p>
           </div>
 
-          {/* The Takeaway */}
-          <section className="my-14 border-y border-[#D9D7D0] py-10 text-center">
-            <div className="text-[11px] uppercase tracking-[0.25em] font-sans font-bold text-[#777777] mb-4">
-              THE TAKEAWAY
+          {/* Sticky Table of Contents & Metadata Sidebar (4 cols) */}
+          <aside className="lg:col-span-4 hidden lg:block">
+            <div className="sticky top-32 space-y-8">
+              {/* Table of Contents card */}
+              <div className="p-6 bg-[#FAF9F6] border border-[#D9D7D0] shadow-sm">
+                <div className="text-[11px] uppercase tracking-[0.25em] font-mono text-[#777777] mb-4 flex items-center justify-between pb-3 border-b border-[#D9D7D0]">
+                  <span>IN THIS DOSSIER</span>
+                  <span className="text-[10px] text-[#888888]">JUMP TO</span>
+                </div>
+                <ul className="space-y-3 text-xs font-sans">
+                  <li>
+                    <a 
+                      href="#introduction" 
+                      onClick={(e) => scrollToSection(e, 'introduction')}
+                      className={`flex items-start gap-2 py-0.5 transition-all ${
+                        activeSectionId === 'introduction'
+                          ? 'text-[#111111] font-semibold translate-x-1.5'
+                          : 'text-[#666666] hover:text-[#111111]'
+                      }`}
+                    >
+                      <span className="font-mono text-[#888888]">00.</span>
+                      <span>Introduction</span>
+                    </a>
+                  </li>
+                  {article.content.sections.map((section) => {
+                    const targetId = `section-${section.number}`;
+                    const isActive = activeSectionId === targetId;
+                    return (
+                      <li key={section.number}>
+                        <a 
+                          href={`#${targetId}`} 
+                          onClick={(e) => scrollToSection(e, targetId)}
+                          className={`flex items-start gap-2 py-0.5 transition-all ${
+                            isActive
+                              ? 'text-[#111111] font-semibold translate-x-1.5'
+                              : 'text-[#666666] hover:text-[#111111]'
+                          }`}
+                        >
+                          <span className="font-mono text-[#888888]">0{section.number}.</span>
+                          <span className="leading-snug">{section.heading}</span>
+                        </a>
+                      </li>
+                    );
+                  })}
+                  <li>
+                    <a 
+                      href="#key-takeaways" 
+                      onClick={(e) => scrollToSection(e, 'key-takeaways')}
+                      className={`flex items-start gap-2 py-0.5 transition-all ${
+                        activeSectionId === 'key-takeaways'
+                          ? 'text-[#111111] font-semibold translate-x-1.5'
+                          : 'text-[#666666] hover:text-[#111111]'
+                      }`}
+                    >
+                      <span className="font-mono text-[#888888]">
+                        0{article.content.sections.length + 1}.
+                      </span>
+                      <span>Takeaways</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Dossier Specs Card */}
+              <div className="p-6 bg-[#FAF9F6] border border-[#D9D7D0] text-xs font-mono space-y-3">
+                <div className="text-[10px] uppercase tracking-[0.25em] text-[#777777] pb-2 border-b border-[#D9D7D0]">
+                  SPEC SHEET
+                </div>
+                <div className="flex justify-between text-[#555555]">
+                  <span>BRAND:</span>
+                  <span className="text-[#111111] font-sans font-semibold">{article.brand}</span>
+                </div>
+                <div className="flex justify-between text-[#555555]">
+                  <span>CATEGORY:</span>
+                  <span className="text-[#111111]">{article.category}</span>
+                </div>
+                <div className="flex justify-between text-[#555555]">
+                  <span>READ TIME:</span>
+                  <span className="text-[#111111]">{article.readTime}</span>
+                </div>
+                <div className="flex justify-between text-[#555555]">
+                  <span>CANONICAL:</span>
+                  <span className="text-[#111111] truncate max-w-[120px]">/blog/{article.slug}</span>
+                </div>
+              </div>
             </div>
-            <blockquote className="editorial-quote text-2xl sm:text-3xl text-[#111111] leading-snug max-w-xl mx-auto">
-              {article.content.takeaway}
-            </blockquote>
-          </section>
-
-          {/* Article Keywords */}
-          <div className="flex flex-wrap items-center gap-2 pt-4 pb-12 border-b border-[#D9D7D0]">
-            <span className="text-[11px] uppercase tracking-wider text-[#777777] font-mono mr-2">
-              KEYWORDS:
-            </span>
-            {article.keywords.map((kw) => (
-              <span
-                key={kw}
-                className="text-xs text-[#555555] font-sans px-2.5 py-1 bg-[#ECEAE5] border border-[#D9D7D0]/70"
-              >
-                {kw}
-              </span>
-            ))}
-          </div>
+          </aside>
         </div>
 
-        {/* Related Stories */}
-        <section className="mt-16 pt-6">
-          <div className="flex items-center justify-between mb-8 pb-3 border-b border-[#D9D7D0]">
-            <h3 className="text-sm uppercase tracking-[0.2em] font-sans font-bold text-[#111111]">
-              RELATED STORIES
-            </h3>
-            <span className="text-xs font-mono text-[#777777]">
-              CONTINUE READING
-            </span>
+        {/* Related Stories Grid */}
+        <section className="mt-24 pt-16 border-t-2 border-[#111111]">
+          <div className="flex items-center justify-between mb-8">
+            <div className="font-mono text-xs uppercase tracking-[0.25em] text-[#777777]">
+              RECOMMENDED INQUIRIES
+            </div>
+            <a
+              href="/"
+              onClick={(e) => {
+                e.preventDefault();
+                onClose();
+              }}
+              className="text-xs uppercase tracking-wider text-[#111111] hover:underline"
+            >
+              View all 15 stories &rarr;
+            </a>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {finalRelated.map((related) => (
+            {finalRelated.map((rel) => (
               <div
-                key={related.id}
-                onClick={() => onSelectArticle(related)}
-                className="group cursor-pointer flex flex-col justify-between"
+                key={rel.id}
+                onClick={() => onSelectArticle(rel)}
+                className="group cursor-pointer p-5 bg-[#FAF9F6] border border-[#D9D7D0] hover:border-[#111111] transition-all hover:shadow-md flex flex-col justify-between"
               >
                 <div>
                   <div className="mb-4 overflow-hidden border border-[#D9D7D0]">
-                    <EditorialVisual article={related} aspectRatio="16:9" />
+                    <EditorialVisual article={rel} aspectRatio="16:9" />
                   </div>
-                  <div className="flex items-center justify-between text-[11px] uppercase tracking-widest text-[#777777] mb-2 font-mono">
-                    <span>{related.brand}</span>
-                    <span>{related.category}</span>
+                  <div className="text-[11px] font-mono text-[#777777] uppercase tracking-wider mb-2">
+                    {rel.category} &bull; {rel.readTime}
                   </div>
-                  <h4 className="text-lg font-editorial text-[#111111] group-hover:text-[#555555] transition-colors line-clamp-2 mb-2">
-                    {related.title}
+                  <h4 className="font-editorial text-lg text-[#111111] group-hover:text-[#444444] transition-colors leading-snug mb-3">
+                    {rel.title}
                   </h4>
                 </div>
-                <div className="pt-2 text-xs uppercase tracking-wider text-[#111111] font-medium flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
-                  <span>Read story</span>
+                <div className="text-xs uppercase tracking-wider text-[#111111] font-medium pt-3 border-t border-[#D9D7D0] flex items-center justify-between">
+                  <span>Read dossier</span>
                   <span>↗</span>
                 </div>
               </div>
             ))}
           </div>
         </section>
-
-        {/* Back to top/stories bottom actions */}
-        <div className="mt-16 pt-8 border-t border-[#D9D7D0] flex items-center justify-between">
-          <button
-            onClick={onClose}
-            className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] font-sans font-medium text-[#111111] hover:text-[#555555] cursor-pointer py-2 px-4 border border-[#111111] hover:bg-[#ECEAE5] transition-colors"
-          >
-            ← Back to all stories
-          </button>
-          <button
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="text-xs uppercase tracking-wider font-mono text-[#777777] hover:text-[#111111] cursor-pointer"
-          >
-            Top ↑
-          </button>
-        </div>
       </article>
     </div>
   );

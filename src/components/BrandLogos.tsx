@@ -18,14 +18,16 @@ export const NikeLogo: React.FC<LogoProps> = ({ className = 'w-10 h-5', color = 
   </svg>
 );
 
-export const ZudioLogo: React.FC<LogoProps> = ({ className = 'w-20 h-6', color = 'currentColor' }) => (
-  <svg viewBox="0 0 140 38" fill={color} className={className} aria-label="Zudio logo">
-    <text x="70" y="25" fontFamily="'Arial Black', Arial, Helvetica, sans-serif" fontWeight="900" fontSize="24" letterSpacing="4" textAnchor="middle">
-      ZUDIO
-    </text>
-    <text x="70" y="34" fontFamily="Arial, Helvetica, sans-serif" fontWeight="600" fontSize="6" letterSpacing="2" textAnchor="middle" opacity="0.75">
-      A TATA ENTERPRISE
-    </text>
+export const ZudioLogo: React.FC<LogoProps> = ({ className = 'w-24 h-7', color = 'currentColor' }) => (
+  <svg viewBox="0 0 525 150" fill={color} className={className} aria-label="Official Zudio logo">
+    <g fill={color}>
+      <path d="M 40 35 H 110 V 50 L 66 90 H 110 V 105 H 40 V 90 L 84 50 H 40 Z" />
+      <path d="M 140 35 H 156 V 82 C 156 88 165 91 177.5 91 C 190 91 199 88 199 82 V 35 H 215 V 84 C 215 97 198 106 177.5 106 C 157 106 140 97 140 84 Z" />
+      <path fillRule="evenodd" d="M 245 35 H 285 C 310 35 325 50 325 70 C 325 90 310 105 285 105 H 245 Z M 261 50 V 90 H 282 C 298 90 308 82 308 70 C 308 58 298 50 282 50 Z" />
+      <path d="M 355 35 H 371 V 105 H 355 Z" />
+      <path fillRule="evenodd" d="M 445 35 C 468 35 485 51 485 70 C 485 89 468 105 445 105 C 422 105 405 89 405 70 C 405 51 422 35 445 35 Z M 445 50 C 433 50 422 59 422 70 C 422 81 433 90 445 90 C 457 90 468 81 468 70 C 468 59 457 50 445 50 Z" />
+    </g>
+    <text x="262" y="134" fill={color} fontFamily="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" fontSize="12" fontWeight="700" letterSpacing="5" textAnchor="middle" opacity="0.8">A TATA ENTERPRISE</text>
   </svg>
 );
 

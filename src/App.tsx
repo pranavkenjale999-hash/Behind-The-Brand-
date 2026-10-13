@@ -13,6 +13,7 @@ import { ArticleCard } from './components/ArticleCard';
 import { ArticleDetail } from './components/ArticleDetail';
 import { AboutSection } from './components/AboutSection';
 import { Footer } from './components/Footer';
+import { SEOHead } from './components/SEOHead';
 
 const CATEGORIES: Category[] = [
   'All',
@@ -29,41 +30,75 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [activeArticle, setActiveArticle] = useState<Article | null>(null);
   const [activeSection, setActiveSection] = useState<'stories' | 'about'>('stories');
+  const [notFoundSlug, setNotFoundSlug] = useState<string | null>(null);
 
-  // Handle URL hash on initial load or popstate
+  // Handle URL path and hash routing on initial load and popstate
   useEffect(() => {
-    const handleHashChange = () => {
+    const handleLocationChange = () => {
+      const pathname = window.location.pathname;
       const hash = window.location.hash;
+
+      // 1. Direct path routing: /blog/:slug
+      if (pathname.startsWith('/blog/')) {
+        const slug = pathname.replace('/blog/', '').replace(/\/$/, '');
+        const found = articles.find((a) => a.slug === slug);
+        if (found) {
+          setActiveArticle(found);
+          setNotFoundSlug(null);
+          return;
+        } else {
+          setActiveArticle(null);
+          setNotFoundSlug(slug);
+          return;
+        }
+      }
+
+      setNotFoundSlug(null);
+
+      // 2. Legacy hash routing support: #story-:id
       if (hash.startsWith('#story-')) {
         const id = parseInt(hash.replace('#story-', ''), 10);
         const found = articles.find((a) => a.id === id);
         if (found) {
           setActiveArticle(found);
+          // Update URL to clean canonical blog path
+          window.history.replaceState(null, '', `/blog/${found.slug}`);
           return;
         }
       }
+
+      // 3. About hash
       if (hash === '#about') {
+        setActiveArticle(null);
         setActiveSection('about');
-        const aboutEl = document.getElementById('about');
-        if (aboutEl) aboutEl.scrollIntoView({ behavior: 'smooth' });
+        setTimeout(() => {
+          const aboutEl = document.getElementById('about');
+          if (aboutEl) aboutEl.scrollIntoView({ behavior: 'smooth' });
+        }, 50);
         return;
       }
+
+      // Root path / or /#stories
+      setActiveArticle(null);
     };
 
-    handleHashChange();
-    window.addEventListener('popstate', handleHashChange);
-    return () => window.removeEventListener('popstate', handleHashChange);
+    handleLocationChange();
+    window.addEventListener('popstate', handleLocationChange);
+    return () => window.removeEventListener('popstate', handleLocationChange);
   }, []);
 
-  // Sync hash when article opens/closes
+  // Sync URL when article opens/closes
   const handleOpenArticle = (article: Article) => {
     setActiveArticle(article);
-    window.history.pushState(null, '', `#story-${article.id}`);
+    setNotFoundSlug(null);
+    window.history.pushState(null, '', `/blog/${article.slug}`);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleCloseArticle = () => {
     setActiveArticle(null);
-    window.history.pushState(null, '', '#stories');
+    setNotFoundSlug(null);
+    window.history.pushState(null, '', '/');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -95,9 +130,10 @@ export default function App() {
 
   const handleNavClick = (section: 'stories' | 'about') => {
     setActiveSection(section);
-    if (activeArticle) {
+    if (activeArticle || notFoundSlug) {
       setActiveArticle(null);
-      window.history.pushState(null, '', `#${section}`);
+      setNotFoundSlug(null);
+      window.history.pushState(null, '', `/#${section}`);
     }
 
     if (section === 'about') {
@@ -120,6 +156,9 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#F5F4F0] text-[#111111] flex flex-col font-sans selection:bg-[#111111] selection:text-[#FAF9F6]">
+      {/* Dynamic SEO Meta Tags & Structured Data */}
+      <SEOHead article={activeArticle} />
+
       {/* Sticky Editorial Header */}
       <Header
         onNavClick={handleNavClick}
@@ -129,7 +168,26 @@ export default function App() {
 
       {/* Main Content Area */}
       <main className="flex-1">
-        {activeArticle ? (
+        {notFoundSlug ? (
+          /* Editorial 404 Page */
+          <div className="max-w-[800px] mx-auto px-5 sm:px-8 py-24 sm:py-32 text-center">
+            <div className="font-mono text-xs uppercase tracking-widest text-[#777777] mb-3">
+              ERROR 404 / NOT FOUND
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-editorial text-[#111111] mb-4">
+              Story Not Found
+            </h1>
+            <p className="text-base text-[#666666] leading-relaxed mb-8 font-sans max-w-md mx-auto">
+              We couldn’t find an analytical case study matching “{notFoundSlug}”. Explore our complete index of 15 iconic brand strategies.
+            </p>
+            <button
+              onClick={handleCloseArticle}
+              className="text-xs uppercase tracking-wider px-5 py-2.5 bg-[#111111] text-[#FAF9F6] border border-[#111111] hover:bg-[#333333] transition-colors cursor-pointer"
+            >
+              Return to Magazine Home
+            </button>
+          </div>
+        ) : activeArticle ? (
           /* Article Detail Reading View */
           <ArticleDetail
             article={activeArticle}
@@ -157,14 +215,31 @@ export default function App() {
             </div>
 
             {/* Stories Grid */}
-            <section className="py-14 sm:py-20 border-b border-[#D9D7D0]">
+            <section className="py-14 sm:py-20 border-b border-[#D9D7D0] bg-[#F5F4F0]">
               <div className="max-w-[1360px] mx-auto px-5 sm:px-8">
+                {/* Section Masthead */}
+                <div className="mb-12 flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-[#D9D7D0]">
+                  <div>
+                    <div className="text-[11px] font-mono uppercase tracking-[0.25em] text-[#777777] mb-2 flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 bg-[#111111]" aria-hidden="true" />
+                      <span>ARCHIVE REPERTOIRE</span>
+                    </div>
+                    <h2 className="text-2xl sm:text-3xl font-editorial font-medium text-[#111111]">
+                      {activeCategory === 'All' ? 'All Brand Strategic Dossiers' : `${activeCategory} Case Studies`}
+                    </h2>
+                  </div>
+                  <div className="text-xs font-mono text-[#777777] uppercase tracking-wider">
+                    SHOWING {filteredArticles.length} OF {articles.length} RELEASES
+                  </div>
+                </div>
+
                 {filteredArticles.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-16">
-                    {filteredArticles.map((article) => (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
+                    {filteredArticles.map((article, index) => (
                       <ArticleCard
                         key={article.id}
                         article={article}
+                        index={index}
                         onReadStory={handleOpenArticle}
                       />
                     ))}

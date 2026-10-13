@@ -53,13 +53,18 @@ export const EditorialVisual: React.FC<EditorialVisualProps> = ({
 
   return (
     <div 
-      className={`relative w-full overflow-hidden bg-[#ECEAE5] border border-[#D9D7D0] ${getAspectClass()} ${className}`}
+      className={`relative w-full overflow-hidden bg-[#ECEAE5] border border-[#D9D7D0] group-hover:border-[#111111]/70 transition-colors duration-300 ${getAspectClass()} ${className}`}
       role="img"
       aria-label={altText}
     >
-      <div className="w-full h-full transition-transform duration-500 ease-out group-hover:scale-[1.02]">
+      <div className="w-full h-full transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.035] will-change-transform">
         <EditorialBrandCover article={article} />
       </div>
+      {/* Subtle editorial photo vignette / overlay on hover */}
+      <div 
+        className="absolute inset-0 bg-black/0 group-hover:bg-black/[0.02] pointer-events-none transition-colors duration-500" 
+        aria-hidden="true" 
+      />
     </div>
   );
 };

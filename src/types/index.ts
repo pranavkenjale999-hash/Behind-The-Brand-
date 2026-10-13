@@ -15,13 +15,20 @@ export interface ArticleSection {
 
 export interface Article {
   id: number;
+  slug: string;
   number: string;
   brand: string;
   category: Exclude<Category, 'All'>;
   title: string;
+  seoTitle?: string;
+  metaDescription?: string;
+  primaryKeyword?: string;
+  relatedKeywords?: string[];
   description: string;
   keywords: string[];
   readTime: string;
+  publishDate?: string;
+  author?: string;
   image?: string;
   imageAlt?: string;
   useOriginalLogoImage?: boolean;

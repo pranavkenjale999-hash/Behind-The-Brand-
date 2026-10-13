@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 525 150" width="525" height="150">
+  <!-- ZUDIO Official Wordmark Vector -->
+  <g fill="#111111">
+    <!-- Letter Z -->
+    <path d="M 40 35 H 110 V 50 L 66 90 H 110 V 105 H 40 V 90 L 84 50 H 40 Z"/>
+    <!-- Letter U -->
+    <path d="M 140 35 H 156 V 82 C 156 88 165 91 177.5 91 C 190 91 199 88 199 82 V 35 H 215 V 84 C 215 97 198 106 177.5 106 C 157 106 140 97 140 84 Z"/>
+    <!-- Letter D -->
+    <path fill-rule="evenodd" d="M 245 35 H 285 C 310 35 325 50 325 70 C 325 90 310 105 285 105 H 245 Z M 261 50 V 90 H 282 C 298 90 308 82 308 70 C 308 58 298 50 282 50 Z"/>
+    <!-- Letter I -->
+    <path d="M 355 35 H 371 V 105 H 355 Z"/>
+    <!-- Letter O -->
+    <path fill-rule="evenodd" d="M 445 35 C 468 35 485 51 485 70 C 485 89 468 105 445 105 C 422 105 405 89 405 70 C 405 51 422 35 445 35 Z M 445 50 C 433 50 422 59 422 70 C 422 81 433 90 445 90 C 457 90 468 81 468 70 C 468 59 457 50 445 50 Z"/>
+  </g>
+  <!-- Subtitle A TATA ENTERPRISE -->
+  <text x="262" y="134" fill="#111111" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12" font-weight="700" letter-spacing="5" text-anchor="middle" opacity="0.8">A TATA ENTERPRISE</text>
+</svg>

@@ -19,50 +19,63 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-[#F5F4F0] border-b border-[#D9D7D0] transition-colors duration-200">
+    <header className="sticky top-0 z-40 bg-[#0C0D0E]/95 backdrop-blur-md border-b border-white/10 transition-all duration-300">
       <div className="max-w-[1360px] mx-auto px-5 sm:px-8 h-16 flex items-center justify-between">
-        {/* Left: Brand Wordmark */}
-        <button 
-          onClick={() => handleLink('stories')}
-          className="text-left group flex items-baseline gap-2 cursor-pointer focus:outline-none"
+        {/* Left: Cinematic Brand Wordmark */}
+        <a 
+          href="/"
+          onClick={(e) => {
+            e.preventDefault();
+            handleLink('stories');
+          }}
+          className="text-left group flex items-baseline gap-2.5 cursor-pointer focus:outline-none"
           aria-label="Behind the Brand home"
         >
-          <span className="font-bold text-sm sm:text-base tracking-wider uppercase text-[#111111]">
+          <span className="font-bold text-sm sm:text-base tracking-[0.2em] uppercase text-[#F5F4F0] group-hover:text-white transition-colors">
             BEHIND THE BRAND
           </span>
-          <span className="text-xs sm:text-sm font-normal text-[#777777] tracking-wider uppercase">
-            / EDITORIAL
+          <span className="text-[10px] sm:text-xs font-mono font-medium text-[#8E9297] tracking-[0.2em] uppercase">
+            / CINEMATIC JOURNAL
           </span>
-        </button>
+        </a>
 
         {/* Right navigation on desktop */}
-        <nav className="hidden md:flex items-center gap-8 text-xs uppercase tracking-[0.15em] font-medium text-[#111111]">
-          <button
-            onClick={() => handleLink('stories')}
-            className={`transition-colors hover:text-[#111111] cursor-pointer py-1 relative ${
-              activeSection === 'stories' ? 'text-[#111111]' : 'text-[#777777]'
+        <nav className="hidden md:flex items-center gap-8 text-xs uppercase tracking-[0.18em] font-medium text-[#F5F4F0]">
+          <a
+            href="/#stories"
+            onClick={(e) => {
+              e.preventDefault();
+              handleLink('stories');
+            }}
+            className={`transition-colors cursor-pointer py-1 relative ${
+              activeSection === 'stories' ? 'text-[#F5F4F0]' : 'text-[#8E9297] hover:text-[#F5F4F0]'
             }`}
           >
-            Stories
+            Stories Archive
             {activeSection === 'stories' && (
-              <span className="absolute -bottom-1 left-0 right-0 h-[1px] bg-[#111111]" />
+              <span className="absolute -bottom-1.5 left-0 right-0 h-[1.5px] bg-[#F5F4F0]" />
             )}
-          </button>
+          </a>
           
-          <button
-            onClick={() => handleLink('about')}
-            className={`transition-colors hover:text-[#111111] cursor-pointer py-1 relative ${
-              activeSection === 'about' ? 'text-[#111111]' : 'text-[#777777]'
+          <a
+            href="/#about"
+            onClick={(e) => {
+              e.preventDefault();
+              handleLink('about');
+            }}
+            className={`transition-colors cursor-pointer py-1 relative ${
+              activeSection === 'about' ? 'text-[#F5F4F0]' : 'text-[#8E9297] hover:text-[#F5F4F0]'
             }`}
           >
-            About
+            Manifesto
             {activeSection === 'about' && (
-              <span className="absolute -bottom-1 left-0 right-0 h-[1px] bg-[#111111]" />
+              <span className="absolute -bottom-1.5 left-0 right-0 h-[1.5px] bg-[#F5F4F0]" />
             )}
-          </button>
+          </a>
 
-          <span className="text-[10px] font-mono text-[#777777] tracking-widest pl-2 border-l border-[#D9D7D0]">
-            VOL. 01 — {totalStoriesCount} ESSAYS
+          <span className="text-[10px] font-mono text-[#8E9297] tracking-widest pl-3 border-l border-white/10 flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span>VOL. 01 — {totalStoriesCount} DOSSIERS</span>
           </span>
         </nav>
 
@@ -70,7 +83,7 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="md:hidden flex items-center">
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="text-xs uppercase tracking-widest text-[#111111] px-2 py-1.5 border border-[#D9D7D0] bg-[#FAF9F6] active:bg-[#ECEAE5]"
+            className="text-xs uppercase tracking-widest text-[#F5F4F0] px-3 py-1.5 border border-white/20 bg-[#141618] active:bg-[#1f2226]"
             aria-expanded={mobileMenuOpen}
             aria-label="Toggle navigation menu"
           >
@@ -81,18 +94,18 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Mobile dropdown menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-b border-[#D9D7D0] bg-[#FAF9F6] px-5 py-4 flex flex-col gap-3">
+        <div className="md:hidden border-b border-white/10 bg-[#141618] px-5 py-4 flex flex-col gap-3">
           <button
             onClick={() => handleLink('stories')}
-            className="text-left text-xs uppercase tracking-[0.15em] font-medium text-[#111111] py-2 border-b border-[#ECEAE5]"
+            className="text-left text-xs uppercase tracking-[0.18em] font-medium text-[#F5F4F0] py-2 border-b border-white/10"
           >
-            Stories ({totalStoriesCount})
+            Stories Archive ({totalStoriesCount})
           </button>
           <button
             onClick={() => handleLink('about')}
-            className="text-left text-xs uppercase tracking-[0.15em] font-medium text-[#111111] py-2"
+            className="text-left text-xs uppercase tracking-[0.18em] font-medium text-[#F5F4F0] py-2"
           >
-            About The Publication
+            Manifesto / About
           </button>
         </div>
       )}
