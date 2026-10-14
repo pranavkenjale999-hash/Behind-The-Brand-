@@ -41,17 +41,6 @@ export const Hero: React.FC = () => {
           <span>THE ESSAYS IN BRAND PSYCHOLOGY &amp; STRATEGY</span>
           <span className="hidden sm:inline">15 IN-DEPTH CASE STUDIES</span>
         </div>
-
-        {/* Explicitly Labeled Primary H1 Heading for Class Evaluation */}
-        <div className="mb-4 flex flex-wrap items-center gap-2">
-          <span className="text-[10px] font-mono font-bold uppercase tracking-[0.22em] text-amber-300 px-2 py-0.5 bg-amber-950/70 border border-amber-500/60 rounded-sm shadow-sm">
-            PAGE HEADING (H1)
-          </span>
-          <span className="text-[11px] font-mono text-[#A8ADB5]">
-            PRIMARY ORGANIC KEYWORD: <strong className="text-[#F5F4F0] font-semibold">"Business case studies"</strong>
-          </span>
-        </div>
-
         {/* Cinematic Large Headline with Line-by-Line Reveal */}
         <h1 className="editorial-hero-title font-medium text-[#F5F4F0] max-w-5xl mb-10 sm:mb-12 text-balance select-none">
           <span className="block overflow-hidden py-1">
