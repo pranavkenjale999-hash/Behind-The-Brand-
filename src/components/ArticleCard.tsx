@@ -42,7 +42,8 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
         href={articleUrl}
         onClick={handleClick} 
         className="block cursor-pointer"
-        aria-label={`Read story: ${article.title}`}
+        aria-label={`Read ${article.brand} case study: ${article.title}`}
+        title={`Read ${article.brand} case study: ${article.title}`}
       >
         {/* 1. Large Image with subtle border highlight */}
         <div className="mb-6 overflow-hidden border border-[#D9D7D0] group-hover:border-[#111111] transition-colors duration-300">
@@ -72,8 +73,10 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
           href={articleUrl}
           onClick={handleClick}
           className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] font-sans font-semibold text-[#111111] cursor-pointer py-1 group/btn"
+          aria-label={`Read full ${article.brand} brand dossier`}
+          title={`Read full ${article.brand} brand dossier`}
         >
-          <span>Read dossier</span>
+          <span>Read {article.brand} dossier</span>
           <span 
             aria-hidden="true" 
             className="inline-block transition-transform duration-200 ease-out group-hover:translate-x-1 group-hover:-translate-y-0.5 text-sm"

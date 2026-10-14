@@ -16,22 +16,72 @@ export const Footer: React.FC = () => {
 
           <div className="md:col-span-3">
             <div className="text-[10px] font-mono uppercase tracking-[0.25em] text-[#8E9297] mb-3">
-              DOSSIER ARCHIVE
+              FEATURED DOSSIERS
             </div>
             <ul className="text-xs space-y-2 text-[#B3B7BD] font-sans">
-              <li>15 Analytical Brand Case Studies</li>
-              <li>Academic SEO Research Project</li>
-              <li>Published October 2026</li>
+              <li>
+                <a
+                  href="/blog/apple-branding-strategy"
+                  className="hover:text-[#F5F4F0] underline-offset-2 hover:underline transition-colors"
+                  title="Apple Branding Strategy: How It Builds a Premium Image"
+                >
+                  Apple Branding Strategy Case Study
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/blog/nike-marketing-strategy"
+                  className="hover:text-[#F5F4F0] underline-offset-2 hover:underline transition-colors"
+                  title="Nike Marketing Strategy: The Power of Emotional Branding"
+                >
+                  Nike Marketing Strategy Case Study
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/blog/zudio-marketing-strategy"
+                  className="hover:text-[#F5F4F0] underline-offset-2 hover:underline transition-colors"
+                  title="Zudio Marketing Strategy: Affordable Fashion Explained"
+                >
+                  Zudio Marketing Strategy Case Study
+                </a>
+              </li>
             </ul>
           </div>
 
           <div className="md:col-span-3">
             <div className="text-[10px] font-mono uppercase tracking-[0.25em] text-[#8E9297] mb-3">
-              CURATION PILLARS
+              QUICK NAVIGATION
             </div>
-            <p className="text-xs text-[#8E9297] leading-relaxed font-sans">
-              Strategy &bull; Psychology &bull; Technology &bull; India Retail &bull; Brand Architecture
-            </p>
+            <ul className="text-xs space-y-2 text-[#B3B7BD] font-sans">
+              <li>
+                <a
+                  href="/#stories"
+                  className="hover:text-[#F5F4F0] underline-offset-2 hover:underline transition-colors"
+                  title="All 15 Brand Strategy Dossiers"
+                >
+                  15 Brand Strategy Dossiers
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/#faq"
+                  className="hover:text-[#F5F4F0] underline-offset-2 hover:underline transition-colors"
+                  title="Direct Answers & Brand FAQ"
+                >
+                  Direct Brand Inquiries & FAQ
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/#about"
+                  className="hover:text-[#F5F4F0] underline-offset-2 hover:underline transition-colors"
+                  title="Editorial Manifesto and Mission"
+                >
+                  Editorial Manifesto & Methodology
+                </a>
+              </li>
+            </ul>
           </div>
         </div>
 

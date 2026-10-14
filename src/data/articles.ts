@@ -17,7 +17,8 @@ export const articles: Article[] = [
     author: "Behind the Brand Editorial Team",
     keywords: ["Apple branding strategy", "Apple premium marketing", "Apple brand positioning", "premium branding", "consumer psychology", "luxury tech"],
     readTime: "6 min read",
-    imageAlt: "Official Apple logo and minimalist editorial cover for Apple branding strategy",
+    editorialImage: "/editorial-apple-workspace.webp",
+    imageAlt: "Minimalist workstation with Apple MacBook Pro and Studio Display showcasing Apple branding strategy and industrial design aesthetic",
     visualTheme: {
       bg: "#111111",
       text: "#F5F4F0",
@@ -30,9 +31,10 @@ export const articles: Article[] = [
       sections: [
         {
           number: "1",
-          heading: "Simplicity as a core Apple branding strategy",
+          heading: "What is Apple's branding strategy?",
           paragraphs: [
-            "In an industry historically dominated by confusing model matrices, Apple pioneered radical subtraction. Steve Jobs famously slashed Apple’s sprawling lineup down to a clean 2x2 grid: desktop vs. portable, consumer vs. pro. By removing excess choice, Apple lowered the cognitive friction of purchasing.",
+            "Apple's branding strategy centers on radical simplicity, emotional brand positioning, and an ecosystem that sells an aspirational lifestyle rather than technical specifications. By paring down product lines to their absolute essentials, maintaining a unified visual language, and positioning its devices as intuitive tools for personal creativity, Apple builds an emotional bond that justifies its sustained pricing power.",
+            "In an industry historically dominated by confusing model matrices, Steve Jobs famously slashed Apple’s sprawling lineup down to a clean 2x2 grid: desktop vs. portable, consumer vs. pro. By removing excess choice, Apple lowered the cognitive friction of purchasing while elevating perceived craftsmanship across every customer touchpoint.",
             "This simplicity carries through industrial design. Where competitors add ports, switches, and explanatory stickers, Apple strips hardware down to seamless anodized aluminum, glass, and silent tolerances. The design tells the user: you don't need to configure this — we took care of the complexity."
           ]
         },
@@ -57,7 +59,7 @@ export const articles: Article[] = [
           heading: "Selling identity and signaling rather than utility",
           paragraphs: [
             "When people carry an iPhone or open a MacBook in a crowded library or coffee shop, they are communicating something subtle about themselves. The white earbuds of 2001 were not just audio cables; they were a badge of taste.",
-            "Apple understands the sociological phenomenon of 'signaling.' Owning Apple products gently affiliates the user with creativity, intentional design, and cultural currency."
+            "Much like the emotional storytelling explored in our <a href=\"/blog/nike-marketing-strategy\" class=\"text-[#111111] underline underline-offset-4 decoration-[#D9D7D0] hover:decoration-[#111111] font-medium transition-colors\">Nike marketing strategy case study</a>, Apple understands the sociological phenomenon of 'signaling.' Owning Apple products gently affiliates the user with creativity, intentional design, and cultural currency."
           ]
         },
         {
@@ -69,7 +71,21 @@ export const articles: Article[] = [
         }
       ],
       keyInsight: "Premium positioning is rarely about charging more; it is about eliminating every tiny detail that makes a customer question why they paid more.",
-      takeaway: "“People don't always buy the product that performs the best. They often buy the product that means something to them.”"
+      takeaway: "“People don't always buy the product that performs the best. They often buy the product that means something to them.”",
+      faq: [
+        {
+          question: "What is Apple's branding strategy?",
+          answer: "Apple's branding strategy centers on radical simplicity, emotional brand positioning, and an ecosystem that sells an aspirational lifestyle rather than technical specifications, justifying a persistent pricing premium."
+        },
+        {
+          question: "How does Apple use premium marketing to justify high prices?",
+          answer: "Apple avoids discount cycles, engineers durable resale value, and designs every physical and digital touchpoint—from retail stores to unboxing—to signal uncompromising craftsmanship."
+        },
+        {
+          question: "What role does brand positioning play in Apple's ecosystem?",
+          answer: "Apple brand positioning transforms utilitarian hardware into a cultural badge of creativity and taste, creating ecosystem lock-in where software, services, and hardware reinforce each other."
+        }
+      ]
     }
   },
   {
@@ -88,7 +104,8 @@ export const articles: Article[] = [
     author: "Behind the Brand Editorial Team",
     keywords: ["Nike marketing strategy", "Nike emotional branding", "Nike advertising strategy", "branding", "sports marketing", "consumer psychology"],
     readTime: "5 min read",
-    imageAlt: "Authentic Nike Swoosh logo and athletic editorial cover for Nike marketing strategy",
+    editorialImage: "/editorial-nike-athlete.webp",
+    imageAlt: "Track and field athlete tying Nike running shoes under stadium lights illustrating Nike marketing strategy and emotional storytelling",
     visualTheme: {
       bg: "#0D0D0D",
       text: "#F5F4F0",
@@ -101,8 +118,9 @@ export const articles: Article[] = [
       sections: [
         {
           number: "1",
-          heading: "The hero’s journey: Nike emotional branding in action",
+          heading: "Why is Nike's marketing strategy effective?",
           paragraphs: [
+            "Nike's marketing strategy is effective because it honors human emotion and the universal hero's journey instead of competing on shoe specifications or raw utility. By framing the everyday consumer as the athlete and the central protagonist facing personal hesitation, Nike emotional branding transforms footwear into a symbol of determination, perseverance, and self-belief.",
             "Nearly every iconic Nike advertisement mirrors the classical narrative structure of myth: the protagonist faces self-doubt, exhaustion, or systemic barriers, and perseveres through quiet internal resolve.",
             "By casting the consumer as the hero and the footwear as the quiet enabler, Nike emotional branding creates an intense psychological bond that commodity athletic brands cannot replicate."
           ]
@@ -120,7 +138,7 @@ export const articles: Article[] = [
           heading: "Cultural alignment and courageous brand conviction",
           paragraphs: [
             "The Nike marketing strategy does not shy away from decisive cultural moments. From Michael Jordan to Colin Kaepernick and Serena Williams, the brand takes calculated risks that reinforce its core ethos: standing for courage, even when it polarizes.",
-            "This courage creates fierce brand loyalty. When a brand stands for a conviction, its consumers defend it like part of their own identity."
+            "Just as radical simplicity anchors the <a href=\"/blog/apple-branding-strategy\" class=\"text-[#111111] underline underline-offset-4 decoration-[#D9D7D0] hover:decoration-[#111111] font-medium transition-colors\">Apple branding strategy</a>, Nike's courage creates fierce brand loyalty. When a brand stands for an uncompromising conviction, its consumers defend it like part of their own identity."
           ]
         },
         {
@@ -139,7 +157,21 @@ export const articles: Article[] = [
         }
       ],
       keyInsight: "When you sell utility, you compete on price. When you sell an emotion and a self-image, price becomes secondary.",
-      takeaway: "“Nike doesn't sell shoes. It sells the belief that inside every ordinary person is an athlete waiting to be unleashed.”"
+      takeaway: "“Nike doesn't sell shoes. It sells the belief that inside every ordinary person is an athlete waiting to be unleashed.”",
+      faq: [
+        {
+          question: "Why is Nike's marketing strategy effective?",
+          answer: "Nike's marketing strategy succeeds by focusing on emotional storytelling and the universal human journey of overcoming adversity, framing the everyday consumer as the athlete rather than selling technical shoe features."
+        },
+        {
+          question: "How does Nike use emotional branding in advertising?",
+          answer: "Nike uses classical mythological storytelling where the customer faces self-doubt or obstacles and overcomes them through perseverance, epitomized by the iconic 'Just Do It' mantra."
+        },
+        {
+          question: "What is Nike's advertising strategy for product drops?",
+          answer: "Nike pairs cultural ambassador partnerships with calculated scarcity and limited releases on the SNKRS app, turning athletic footwear into high-demand cultural collectibles."
+        }
+      ]
     }
   },
   {
@@ -158,7 +190,8 @@ export const articles: Article[] = [
     author: "Behind the Brand Editorial Team",
     keywords: ["Zudio marketing strategy", "Zudio affordable fashion", "Zudio target audience", "fast fashion", "Indian retail", "Trent", "Gen Z shopping"],
     readTime: "5 min read",
-    imageAlt: "Zudio logo and modern fashion retail editorial cover for Zudio marketing strategy",
+    editorialImage: "/editorial-zudio-retail.webp",
+    imageAlt: "Contemporary Zudio fast fashion retail store interior with modern merchandising displays illustrating Zudio marketing strategy and affordable fashion model",
     visualTheme: {
       bg: "#202020",
       text: "#F5F4F0",
@@ -171,8 +204,9 @@ export const articles: Article[] = [
       sections: [
         {
           number: "1",
-          heading: "The psychological anchor: Zudio affordable fashion under ₹999",
+          heading: "How does Zudio make fashion affordable?",
           paragraphs: [
+            "Zudio makes fashion affordable through a disciplined combination of high-velocity supply chain operations, localized volume manufacturing, and price-anchored collections under ₹999. By eliminating expensive celebrity endorsements and television ad campaigns, Trent redirects capital into high-footfall store footprints and inventory agility, passing operational cost savings directly to young Indian shoppers.",
             "At Zudio, the majority of merchandise sits below ₹999, with substantial collections under ₹499 and ₹299. In consumer psychology, keeping price points below key psychological thresholds triggers guilt-free impulsive purchasing.",
             "Customers enter planning to browse and leave with three items because the friction of calculating the bill disappears entirely in this model of Zudio affordable fashion."
           ]
@@ -204,12 +238,26 @@ export const articles: Article[] = [
           number: "5",
           heading: "What other brands can learn from Zudio",
           paragraphs: [
-            "Affordable does not have to look cheap. If you respect your customer's dignity through thoughtful packaging, clean environments, and trendy curation, you capture their lifelong loyalty."
+            "Operated by Trent and drawing on the foundational reliability of <a href=\"/blog/tata-trust-heritage-branding\" class=\"text-[#111111] underline underline-offset-4 decoration-[#D9D7D0] hover:decoration-[#111111] font-medium transition-colors\">Tata's heritage branding</a>, Zudio proves that affordable does not have to look cheap. If you respect your customer's dignity through thoughtful store environments, clean aesthetics, and trendy curation, you capture lifelong customer loyalty."
           ]
         }
       ],
       keyInsight: "True disruption in emerging markets happens when you deliver the aesthetic of a luxury experience at the price of an everyday commodity.",
-      takeaway: "“Zudio proved that young consumers don't just want discounts; they want to feel stylish while spending responsibly.”"
+      takeaway: "“Zudio proved that young consumers don't just want discounts; they want to feel stylish while spending responsibly.”",
+      faq: [
+        {
+          question: "How does Zudio make fashion affordable?",
+          answer: "Zudio achieves ultra-affordable fashion through rapid supply chain cycles, localized sourcing, strict inventory turns, and zero spending on traditional celebrity or television advertising campaigns."
+        },
+        {
+          question: "Who is the primary Zudio target audience?",
+          answer: "Zudio targets fashion-conscious Gen Z youth, college students, and young working professionals in India seeking trendy apparel and cosmetics without high financial commitments."
+        },
+        {
+          question: "How does the Zudio marketing strategy drive store footfall?",
+          answer: "Zudio relies on prime retail locations, high-end store ambiance, word-of-mouth social media 'hauls,' and fortnightly new collection drops that create continuous urgency to visit."
+        }
+      ]
     }
   },
   {

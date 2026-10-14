@@ -13,6 +13,11 @@ export interface ArticleSection {
   paragraphs: string[];
 }
 
+export interface ArticleFAQ {
+  question: string;
+  answer: string;
+}
+
 export interface Article {
   id: number;
   slug: string;
@@ -30,8 +35,8 @@ export interface Article {
   publishDate?: string;
   author?: string;
   image?: string;
+  editorialImage?: string;
   imageAlt?: string;
-  useOriginalLogoImage?: boolean;
   visualTheme: {
     bg: string;
     text: string;
@@ -43,6 +48,7 @@ export interface Article {
     sections: ArticleSection[];
     keyInsight: string;
     takeaway: string;
+    faq?: ArticleFAQ[];
   };
   relatedIds: number[];
 }

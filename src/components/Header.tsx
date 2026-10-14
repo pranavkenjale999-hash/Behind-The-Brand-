@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 interface HeaderProps {
-  onNavClick: (section: 'stories' | 'about') => void;
+  onNavClick: (section: 'stories' | 'about' | 'faq') => void;
   activeSection?: string;
   totalStoriesCount?: number;
 }
@@ -13,7 +13,7 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const handleLink = (section: 'stories' | 'about') => {
+  const handleLink = (section: 'stories' | 'about' | 'faq') => {
     onNavClick(section);
     setMobileMenuOpen(false);
   };
@@ -29,7 +29,8 @@ export const Header: React.FC<HeaderProps> = ({
             handleLink('stories');
           }}
           className="text-left group flex items-baseline gap-2.5 cursor-pointer focus:outline-none"
-          aria-label="Behind the Brand home"
+          aria-label="Behind the Brand Homepage"
+          title="Behind the Brand — Homepage"
         >
           <span className="font-bold text-sm sm:text-base tracking-[0.2em] uppercase text-[#F5F4F0] group-hover:text-white transition-colors">
             BEHIND THE BRAND
@@ -40,7 +41,7 @@ export const Header: React.FC<HeaderProps> = ({
         </a>
 
         {/* Right navigation on desktop */}
-        <nav className="hidden md:flex items-center gap-8 text-xs uppercase tracking-[0.18em] font-medium text-[#F5F4F0]">
+        <nav className="hidden md:flex items-center gap-7 text-xs uppercase tracking-[0.18em] font-medium text-[#F5F4F0]">
           <a
             href="/#stories"
             onClick={(e) => {
@@ -50,9 +51,27 @@ export const Header: React.FC<HeaderProps> = ({
             className={`transition-colors cursor-pointer py-1 relative ${
               activeSection === 'stories' ? 'text-[#F5F4F0]' : 'text-[#8E9297] hover:text-[#F5F4F0]'
             }`}
+            title="Browse all 15 brand stories archive"
           >
             Stories Archive
             {activeSection === 'stories' && (
+              <span className="absolute -bottom-1.5 left-0 right-0 h-[1.5px] bg-[#F5F4F0]" />
+            )}
+          </a>
+
+          <a
+            href="/#faq"
+            onClick={(e) => {
+              e.preventDefault();
+              handleLink('faq');
+            }}
+            className={`transition-colors cursor-pointer py-1 relative ${
+              activeSection === 'faq' ? 'text-[#F5F4F0]' : 'text-[#8E9297] hover:text-[#F5F4F0]'
+            }`}
+            title="Frequently Answered Questions and AEO inquiries"
+          >
+            Direct FAQ
+            {activeSection === 'faq' && (
               <span className="absolute -bottom-1.5 left-0 right-0 h-[1.5px] bg-[#F5F4F0]" />
             )}
           </a>
@@ -66,6 +85,7 @@ export const Header: React.FC<HeaderProps> = ({
             className={`transition-colors cursor-pointer py-1 relative ${
               activeSection === 'about' ? 'text-[#F5F4F0]' : 'text-[#8E9297] hover:text-[#F5F4F0]'
             }`}
+            title="Editorial Manifesto and Mission"
           >
             Manifesto
             {activeSection === 'about' && (
@@ -100,6 +120,12 @@ export const Header: React.FC<HeaderProps> = ({
             className="text-left text-xs uppercase tracking-[0.18em] font-medium text-[#F5F4F0] py-2 border-b border-white/10"
           >
             Stories Archive ({totalStoriesCount})
+          </button>
+          <button
+            onClick={() => handleLink('faq')}
+            className="text-left text-xs uppercase tracking-[0.18em] font-medium text-[#F5F4F0] py-2 border-b border-white/10"
+          >
+            Direct FAQ (AEO)
           </button>
           <button
             onClick={() => handleLink('about')}

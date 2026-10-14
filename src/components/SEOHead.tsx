@@ -49,6 +49,9 @@ export const SEOHead: React.FC<SEOHeadProps> = ({ article }) => {
       const pageTitle = article.seoTitle || `${article.title} | Behind the Brand`;
       const metaDesc = article.metaDescription || article.description;
       const canonicalUrl = `${origin}/blog/${article.slug}`;
+      const imageUrl = article.editorialImage 
+        ? `${origin}${article.editorialImage}` 
+        : `${origin}/apple_logo_official.svg`;
 
       document.title = pageTitle;
       setMetaTag('name', 'description', metaDesc);
@@ -60,84 +63,105 @@ export const SEOHead: React.FC<SEOHeadProps> = ({ article }) => {
       setMetaTag('property', 'og:type', 'article');
       setMetaTag('property', 'og:url', canonicalUrl);
       setMetaTag('property', 'og:site_name', 'Behind the Brand');
+      setMetaTag('property', 'og:image', imageUrl);
 
       // Twitter Cards
       setMetaTag('name', 'twitter:card', 'summary_large_image');
       setMetaTag('name', 'twitter:title', pageTitle);
       setMetaTag('name', 'twitter:description', metaDesc);
+      setMetaTag('name', 'twitter:image', imageUrl);
 
       // Keywords meta tag
       if (article.keywords && article.keywords.length > 0) {
         setMetaTag('name', 'keywords', article.keywords.join(', '));
       }
 
-      // Schema.org Structured Data: Article + BreadcrumbList
-      const articleSchema = {
-        '@context': 'https://schema.org',
-        '@graph': [
-          {
-            '@type': 'BlogPosting',
-            '@id': `${canonicalUrl}#article`,
-            'isPartOf': {
-              '@type': 'Blog',
-              '@id': `${origin}/#blog`,
-              'name': 'Behind the Brand',
-              'publisher': {
-                '@type': 'Organization',
-                'name': 'Behind the Brand',
-                'url': origin
-              }
-            },
-            'headline': article.seoTitle || article.title,
-            'description': metaDesc,
-            'mainEntityOfPage': canonicalUrl,
-            'datePublished': '2026-01-15T09:00:00+05:30',
-            'dateModified': '2026-10-08T12:00:00+05:30',
-            'author': {
-              '@type': 'Organization',
-              'name': article.author || 'Behind the Brand Editorial Team'
-            },
+      // Schema.org Structured Data: Article + BreadcrumbList + Optional FAQPage
+      const graphItems: object[] = [
+        {
+          '@type': 'BlogPosting',
+          '@id': `${canonicalUrl}#article`,
+          'isPartOf': {
+            '@type': 'Blog',
+            '@id': `${origin}/#blog`,
+            'name': 'Behind the Brand',
             'publisher': {
               '@type': 'Organization',
               'name': 'Behind the Brand',
               'url': origin
-            },
-            'articleSection': article.category,
-            'keywords': article.keywords ? article.keywords.join(', ') : undefined
+            }
           },
-          {
-            '@type': 'BreadcrumbList',
-            '@id': `${canonicalUrl}#breadcrumb`,
-            'itemListElement': [
-              {
-                '@type': 'ListItem',
-                'position': 1,
-                'name': 'Home',
-                'item': `${origin}/`
-              },
-              {
-                '@type': 'ListItem',
-                'position': 2,
-                'name': 'Blog',
-                'item': `${origin}/#stories`
-              },
-              {
-                '@type': 'ListItem',
-                'position': 3,
-                'name': article.brand,
-                'item': canonicalUrl
-              }
-            ]
-          }
-        ]
+          'headline': article.seoTitle || article.title,
+          'description': metaDesc,
+          'image': imageUrl,
+          'mainEntityOfPage': canonicalUrl,
+          'datePublished': '2026-01-15T09:00:00+05:30',
+          'dateModified': '2026-10-08T12:00:00+05:30',
+          'author': {
+            '@type': 'Organization',
+            'name': article.author || 'Behind the Brand Editorial Team'
+          },
+          'publisher': {
+            '@type': 'Organization',
+            'name': 'Behind the Brand',
+            'url': origin
+          },
+          'articleSection': article.category,
+          'keywords': article.keywords ? article.keywords.join(', ') : undefined
+        },
+        {
+          '@type': 'BreadcrumbList',
+          '@id': `${canonicalUrl}#breadcrumb`,
+          'itemListElement': [
+            {
+              '@type': 'ListItem',
+              'position': 1,
+              'name': 'Behind the Brand Home',
+              'item': `${origin}/`
+            },
+            {
+              '@type': 'ListItem',
+              'position': 2,
+              'name': 'Brand Case Studies',
+              'item': `${origin}/#stories-grid`
+            },
+            {
+              '@type': 'ListItem',
+              'position': 3,
+              'name': article.brand,
+              'item': canonicalUrl
+            }
+          ]
+        }
+      ];
+
+      if (article.content.faq && article.content.faq.length > 0) {
+        graphItems.push({
+          '@type': 'FAQPage',
+          '@id': `${canonicalUrl}#faq`,
+          'mainEntity': article.content.faq.map((item) => ({
+            '@type': 'Question',
+            'name': item.question,
+            'acceptedAnswer': {
+              '@type': 'Answer',
+              'text': item.answer
+            }
+          }))
+        });
+      }
+
+      const articleSchema = {
+        '@context': 'https://schema.org',
+        '@graph': graphItems
       };
 
       setJsonLd(articleSchema);
     } else {
       // 2. Homepage SEO
-      const homeTitle = 'Behind the Brand — Editorial Business & Branding Magazine';
-      const homeDesc = 'Explore in-depth business case studies, marketing strategies, brand psychology, and consumer stories behind iconic global and Indian brands.';
+      const homeTitle = 'Behind the Brand — Brand Strategy & Editorial Case Studies';
+      const homeDesc = 'Discover analytical brand marketing strategies, consumer psychology, and business case studies behind iconic brands like Apple, Nike, and Zudio.';
       const homeCanonical = `${origin}/`;
+      const homeImage = `${origin}/editorial-apple-workspace.webp`;
 
       document.title = homeTitle;
       setMetaTag('name', 'description', homeDesc);
@@ -149,13 +173,22 @@ export const SEOHead: React.FC<SEOHeadProps> = ({ article }) => {
       setMetaTag('property', 'og:type', 'website');
       setMetaTag('property', 'og:url', homeCanonical);
       setMetaTag('property', 'og:site_name', 'Behind the Brand');
+      setMetaTag('property', 'og:image', homeImage);
 
       // Twitter Cards
       setMetaTag('name', 'twitter:card', 'summary_large_image');
       setMetaTag('name', 'twitter:title', homeTitle);
       setMetaTag('name', 'twitter:description', homeDesc);
+      setMetaTag('name', 'twitter:image', homeImage);
 
-      // Homepage Schema
+      // Keywords meta tag
+      setMetaTag(
+        'name',
+        'keywords',
+        'Apple branding strategy, Nike marketing strategy, Zudio marketing strategy, branding case studies, marketing psychology, business strategy'
+      );
+
+      // Homepage Schema: WebSite + Blog + FAQPage for AEO
       const homeSchema = {
         '@context': 'https://schema.org',
         '@graph': [
@@ -173,9 +206,55 @@ export const SEOHead: React.FC<SEOHeadProps> = ({ article }) => {
           {
             '@type': 'Blog',
             '@id': `${origin}/#blog`,
-            'name': 'Behind the Brand Essays',
+            'name': 'Behind the Brand Editorial Dossiers',
             'description': homeDesc,
             'url': homeCanonical
+          },
+          {
+            '@type': 'FAQPage',
+            '@id': `${origin}/#faq`,
+            'mainEntity': [
+              {
+                '@type': 'Question',
+                'name': 'What is Behind the Brand?',
+                'acceptedAnswer': {
+                  '@type': 'Answer',
+                  'text': 'Behind the Brand is an independent editorial publication and business archive dedicated to decoding the marketing strategies, brand positioning, pricing power, and consumer psychology behind iconic global and Indian companies.'
+                }
+              },
+              {
+                '@type': 'Question',
+                'name': "What is Apple's core branding strategy?",
+                'acceptedAnswer': {
+                  '@type': 'Answer',
+                  'text': "Apple's branding strategy is built on radical simplicity, emotional brand positioning, and obsessive design consistency across software, hardware, retail, and packaging, turning functional technology into an aspirational lifestyle identity."
+                }
+              },
+              {
+                '@type': 'Question',
+                'name': "Why is Nike's marketing strategy effective?",
+                'acceptedAnswer': {
+                  '@type': 'Answer',
+                  'text': "Nike's marketing strategy succeeds by prioritizing emotional storytelling and the universal hero's journey over technical shoe specifications, empowering consumers to view themselves as everyday athletes through its 'Just Do It' philosophy."
+                }
+              },
+              {
+                '@type': 'Question',
+                'name': 'How does Zudio make fashion affordable in India?',
+                'acceptedAnswer': {
+                  '@type': 'Answer',
+                  'text': "Zudio delivers affordable fast fashion by leveraging localized volume supply chains, zero mainstream television advertising spend, rapid micro-collection turnover, and pricing anchored below ₹999 under Trent's retail leadership."
+                }
+              },
+              {
+                '@type': 'Question',
+                'name': 'Can I access each brand case study via a direct URL?',
+                'acceptedAnswer': {
+                  '@type': 'Answer',
+                  'text': 'Yes. Every dossier in our 15-brand archive has its own permanent, direct URL (such as /blog/apple-branding-strategy, /blog/nike-marketing-strategy, and /blog/zudio-marketing-strategy) with complete executive takeaways and structured analysis.'
+                }
+              }
+            ]
           }
         ]
       };

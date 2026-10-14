@@ -20,7 +20,7 @@ export const ArticleDetail: React.FC<ArticleDetailProps> = ({
   const [scrollProgress, setScrollProgress] = useState(0);
   const [activeSectionId, setActiveSectionId] = useState<string>('introduction');
 
-  // Keyboard navigation & scroll to top on change
+    // Keyboard navigation & scroll to top on change
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -52,6 +52,7 @@ export const ArticleDetail: React.FC<ArticleDetailProps> = ({
       'introduction',
       ...article.content.sections.map((s) => `section-${s.number}`),
       'key-takeaways',
+      ...(article.content.faq && article.content.faq.length > 0 ? ['faq-section'] : []),
     ];
 
     const observer = new IntersectionObserver(
@@ -76,7 +77,7 @@ export const ArticleDetail: React.FC<ArticleDetailProps> = ({
     return () => {
       observer.disconnect();
     };
-  }, [article.id, article.content.sections]);
+  }, [article.id, article.content.sections, article.content.faq]);
 
   const handleShare = () => {
     if (navigator.clipboard) {
@@ -92,6 +93,22 @@ export const ArticleDetail: React.FC<ArticleDetailProps> = ({
     if (el) {
       el.scrollIntoView({ behavior: 'smooth' });
       setActiveSectionId(id);
+    }
+  };
+
+  // Intercept click on internal links in article content
+  const handleContentClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const target = (e.target as HTMLElement).closest('a');
+    if (target) {
+      const href = target.getAttribute('href');
+      if (href && href.startsWith('/blog/')) {
+        const slug = href.replace('/blog/', '').replace(/\/$/, '');
+        const targetArticle = allArticles.find((a) => a.slug === slug);
+        if (targetArticle) {
+          e.preventDefault();
+          onSelectArticle(targetArticle);
+        }
+      }
     }
   };
 
@@ -111,7 +128,7 @@ export const ArticleDetail: React.FC<ArticleDetailProps> = ({
 
   return (
     <div className="min-h-screen bg-[#F5F4F0] text-[#111111] animate-article-enter will-change-transform">
-      {/* Top Reading Progress Bar with glow */}
+      {/* Top Reading Progress Bar with subtle glow */}
       <div 
         className="fixed top-0 left-0 h-[3px] bg-gradient-to-r from-neutral-800 to-black z-50 transition-[width] duration-150 ease-out shadow-[0_0_8px_rgba(0,0,0,0.4)]"
         style={{ width: `${scrollProgress}%` }}
@@ -131,9 +148,10 @@ export const ArticleDetail: React.FC<ArticleDetailProps> = ({
               onClose();
             }}
             className="group inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-sans font-medium text-[#111111] hover:text-[#555555] cursor-pointer py-1"
+            title="Return to Behind the Brand Homepage"
           >
             <span aria-hidden="true" className="group-hover:-translate-x-1 transition-transform duration-200">←</span>
-            <span>Back to dossiers</span>
+            <span>Return to Behind the Brand Homepage</span>
           </a>
 
           <div className="flex items-center gap-4 text-xs font-mono text-[#777777]">
@@ -149,7 +167,7 @@ export const ArticleDetail: React.FC<ArticleDetailProps> = ({
             <button
               onClick={onClose}
               className="text-[#111111] hover:text-[#777777] cursor-pointer p-1 font-mono text-sm"
-              aria-label="Close article"
+              aria-label="Close article and return to homepage"
             >
               ✕
             </button>
@@ -178,26 +196,26 @@ export const ArticleDetail: React.FC<ArticleDetailProps> = ({
                   }}
                   className="hover:text-[#F5F4F0] transition-colors"
                 >
-                  Index
+                  Behind the Brand Home
                 </a>
               </li>
               <li aria-hidden="true" className="text-white/20">/</li>
               <li>
                 <a
-                  href="/#stories"
+                  href="/#stories-grid"
                   onClick={(e) => {
                     e.preventDefault();
                     onClose();
                   }}
                   className="hover:text-[#F5F4F0] transition-colors"
                 >
-                  Stories
+                  All Brand Case Studies
                 </a>
               </li>
               <li aria-hidden="true" className="text-white/20">/</li>
               <li>
                 <span className="text-[#F5F4F0] font-medium" aria-current="page">
-                  {article.brand}
+                  {article.seoTitle || article.title}
                 </span>
               </li>
             </ol>
@@ -243,15 +261,43 @@ export const ArticleDetail: React.FC<ArticleDetailProps> = ({
 
       {/* Main Reading Canvas */}
       <article className="max-w-[1040px] mx-auto px-5 sm:px-8 pt-10 sm:pt-14 pb-24">
-        {/* Hero Visual Container */}
-        <div className="mb-14 border border-[#D9D7D0] shadow-md overflow-hidden bg-[#ECEAE5]">
-          <EditorialVisual article={article} aspectRatio="16:9" isHero={true} />
-        </div>
+        {/* Hero Visual Container: High-Res WebP Editorial Photography or Vector Brand Cover */}
+        {article.editorialImage ? (
+          <figure className="mb-14 border border-[#D9D7D0] shadow-md overflow-hidden bg-[#ECEAE5]">
+            <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#111111]">
+              <picture>
+                <source srcSet={article.editorialImage} type="image/webp" />
+                <img
+                  src={article.editorialImage}
+                  alt={article.imageAlt || `${article.brand} brand editorial cover`}
+                  loading="eager"
+                  width={1600}
+                  height={900}
+                  className="w-full h-full object-cover transition-transform duration-700 ease-out hover:scale-[1.02]"
+                />
+              </picture>
+              <div className="absolute top-4 left-4 bg-[#111111]/90 backdrop-blur-sm text-[#F5F4F0] px-3 py-1 text-[11px] font-mono uppercase tracking-[0.2em] border border-white/20 flex items-center gap-2">
+                <BrandLogo brand={article.brand} className="h-3.5 w-auto" color="#F5F4F0" />
+                <span>{article.brand} STRATEGIC DOSSIER</span>
+              </div>
+            </div>
+            {article.imageAlt && (
+              <figcaption className="px-5 py-3 bg-[#FAF9F6] border-t border-[#D9D7D0] text-xs font-mono text-[#555555] flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <span className="font-semibold text-[#111111]">FIG. 01 — {article.brand.toUpperCase()} EDITORIAL ARCHIVE</span>
+                <span className="text-[#666666] font-sans italic">{article.imageAlt}</span>
+              </figcaption>
+            )}
+          </figure>
+        ) : (
+          <div className="mb-14 border border-[#D9D7D0] shadow-md overflow-hidden bg-[#ECEAE5]">
+            <EditorialVisual article={article} aspectRatio="16:9" isHero={true} />
+          </div>
+        )}
 
         {/* Reading Column & Sticky Sidebar */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           {/* Main Content (8 cols) */}
-          <div className="lg:col-span-8 max-w-[700px]">
+          <div className="lg:col-span-8 max-w-[700px]" onClick={handleContentClick}>
             {/* Introduction */}
             <section id="introduction" className="mb-14 scroll-mt-32">
               <div className="font-mono text-xs uppercase tracking-[0.25em] text-[#777777] mb-3 flex items-center gap-2">
@@ -283,7 +329,7 @@ export const ArticleDetail: React.FC<ArticleDetailProps> = ({
 
                   <div className="space-y-5 text-base sm:text-lg text-[#333333] leading-relaxed font-sans font-light">
                     {section.paragraphs.map((p, pIdx) => (
-                      <p key={pIdx}>{p}</p>
+                      <p key={pIdx} dangerouslySetInnerHTML={{ __html: p }} />
                     ))}
                   </div>
                 </section>
@@ -309,7 +355,7 @@ export const ArticleDetail: React.FC<ArticleDetailProps> = ({
                   CONCLUSION &amp; EXECUTIVE TAKEAWAY
                 </div>
                 <h3 className="text-2xl font-editorial font-medium text-[#111111] mb-4">
-                  The Enduring Legacy
+                  The Enduring Strategic Legacy
                 </h3>
                 <p className="text-base sm:text-lg text-[#333333] leading-relaxed font-sans font-light">
                   {article.content.takeaway}
@@ -317,10 +363,39 @@ export const ArticleDetail: React.FC<ArticleDetailProps> = ({
               </section>
             )}
 
+            {/* Structured FAQ Section (AEO Target) */}
+            {article.content.faq && article.content.faq.length > 0 && (
+              <section id="faq-section" className="scroll-mt-32 pt-10 border-t-2 border-[#111111] mb-14">
+                <div className="font-mono text-xs uppercase tracking-[0.25em] text-[#777777] mb-2 flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-[#111111]" aria-hidden="true" />
+                  <span>FREQUENTLY ASKED QUESTIONS (AEO)</span>
+                </div>
+                <h3 className="text-2xl sm:text-3xl font-editorial font-medium text-[#111111] mb-6">
+                  Direct Answers: {article.brand} Brand Strategy Inquiries
+                </h3>
+                <div className="space-y-4">
+                  {article.content.faq.map((item, fIdx) => (
+                    <div 
+                      key={fIdx} 
+                      className="p-5 sm:p-6 bg-[#FAF9F6] border border-[#D9D7D0] shadow-sm hover:border-[#111111]/60 transition-colors"
+                    >
+                      <h4 className="text-base sm:text-lg font-editorial font-semibold text-[#111111] mb-2 flex items-start gap-3">
+                        <span className="font-mono text-xs text-[#777777] mt-1 shrink-0">Q{fIdx + 1}.</span>
+                        <span>{item.question}</span>
+                      </h4>
+                      <p className="text-sm sm:text-base text-[#444444] leading-relaxed font-sans pl-7 border-l-2 border-[#111111]/30 mt-2">
+                        {item.answer}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
             {/* Keyword tags for academic context */}
             <div className="pt-8 border-t border-[#D9D7D0]">
               <div className="text-[11px] font-mono text-[#777777] uppercase tracking-[0.2em] mb-3">
-                INDEXED KEYWORDS:
+                INDEXED STRATEGIC KEYWORDS:
               </div>
               <div className="flex flex-wrap gap-2">
                 {article.keywords.map((kw) => (
@@ -395,6 +470,24 @@ export const ArticleDetail: React.FC<ArticleDetailProps> = ({
                       <span>Takeaways</span>
                     </a>
                   </li>
+                  {article.content.faq && article.content.faq.length > 0 && (
+                    <li>
+                      <a 
+                        href="#faq-section" 
+                        onClick={(e) => scrollToSection(e, 'faq-section')}
+                        className={`flex items-start gap-2 py-0.5 transition-all ${
+                          activeSectionId === 'faq-section'
+                            ? 'text-[#111111] font-semibold translate-x-1.5'
+                            : 'text-[#666666] hover:text-[#111111]'
+                        }`}
+                      >
+                        <span className="font-mono text-[#888888]">
+                          0{article.content.sections.length + 2}.
+                        </span>
+                        <span>Brand FAQ (AEO)</span>
+                      </a>
+                    </li>
+                  )}
                 </ul>
               </div>
 
@@ -419,6 +512,9 @@ export const ArticleDetail: React.FC<ArticleDetailProps> = ({
                   <span>CANONICAL:</span>
                   <span className="text-[#111111] truncate max-w-[120px]">/blog/{article.slug}</span>
                 </div>
+                <div className="pt-2 border-t border-[#D9D7D0] text-[10px] text-[#777777] leading-relaxed">
+                  DIRECT PERMALINK ACTIVE ON VERCEL SPA
+                </div>
               </div>
             </div>
           </aside>
@@ -428,7 +524,7 @@ export const ArticleDetail: React.FC<ArticleDetailProps> = ({
         <section className="mt-24 pt-16 border-t-2 border-[#111111]">
           <div className="flex items-center justify-between mb-8">
             <div className="font-mono text-xs uppercase tracking-[0.25em] text-[#777777]">
-              RECOMMENDED INQUIRIES
+              RECOMMENDED INQUIRIES &amp; RELATED CASE STUDIES
             </div>
             <a
               href="/"
@@ -437,8 +533,9 @@ export const ArticleDetail: React.FC<ArticleDetailProps> = ({
                 onClose();
               }}
               className="text-xs uppercase tracking-wider text-[#111111] hover:underline"
+              title="Return to Behind the Brand Homepage"
             >
-              View all 15 stories &rarr;
+              View all 15 brand case studies on homepage &rarr;
             </a>
           </div>
 
@@ -457,12 +554,12 @@ export const ArticleDetail: React.FC<ArticleDetailProps> = ({
                     {rel.category} &bull; {rel.readTime}
                   </div>
                   <h4 className="font-editorial text-lg text-[#111111] group-hover:text-[#444444] transition-colors leading-snug mb-3">
-                    {rel.title}
+                    {rel.seoTitle || rel.title}
                   </h4>
                 </div>
                 <div className="text-xs uppercase tracking-wider text-[#111111] font-medium pt-3 border-t border-[#D9D7D0] flex items-center justify-between">
-                  <span>Read dossier</span>
-                  <span>↗</span>
+                  <span>Read {rel.brand} strategy</span>
+                  <span aria-hidden="true">↗</span>
                 </div>
               </div>
             ))}

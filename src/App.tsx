@@ -12,6 +12,7 @@ import { FilterBar } from './components/FilterBar';
 import { ArticleCard } from './components/ArticleCard';
 import { ArticleDetail } from './components/ArticleDetail';
 import { AboutSection } from './components/AboutSection';
+import { HomepageFAQ } from './components/HomepageFAQ';
 import { Footer } from './components/Footer';
 import { SEOHead } from './components/SEOHead';
 
@@ -29,7 +30,7 @@ export default function App() {
   const [activeCategory, setActiveCategory] = useState<Category>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [activeArticle, setActiveArticle] = useState<Article | null>(null);
-  const [activeSection, setActiveSection] = useState<'stories' | 'about'>('stories');
+  const [activeSection, setActiveSection] = useState<'stories' | 'about' | 'faq'>('stories');
   const [notFoundSlug, setNotFoundSlug] = useState<string | null>(null);
 
   // Handle URL path and hash routing on initial load and popstate
@@ -74,6 +75,17 @@ export default function App() {
         setTimeout(() => {
           const aboutEl = document.getElementById('about');
           if (aboutEl) aboutEl.scrollIntoView({ behavior: 'smooth' });
+        }, 50);
+        return;
+      }
+
+      // 4. FAQ hash
+      if (hash === '#faq') {
+        setActiveArticle(null);
+        setActiveSection('faq');
+        setTimeout(() => {
+          const faqEl = document.getElementById('faq');
+          if (faqEl) faqEl.scrollIntoView({ behavior: 'smooth' });
         }, 50);
         return;
       }
@@ -128,7 +140,7 @@ export default function App() {
     });
   }, [activeCategory, searchQuery]);
 
-  const handleNavClick = (section: 'stories' | 'about') => {
+  const handleNavClick = (section: 'stories' | 'about' | 'faq') => {
     setActiveSection(section);
     if (activeArticle || notFoundSlug) {
       setActiveArticle(null);
@@ -139,6 +151,11 @@ export default function App() {
     if (section === 'about') {
       setTimeout(() => {
         const el = document.getElementById('about');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 50);
+    } else if (section === 'faq') {
+      setTimeout(() => {
+        const el = document.getElementById('faq');
         if (el) el.scrollIntoView({ behavior: 'smooth' });
       }, 50);
     } else {
@@ -266,6 +283,9 @@ export default function App() {
                 )}
               </div>
             </section>
+
+            {/* Direct Answer Engine Optimization (AEO) FAQ Section */}
+            <HomepageFAQ />
 
             {/* About Section */}
             <AboutSection />
